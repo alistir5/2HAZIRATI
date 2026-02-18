@@ -1,58 +1,38 @@
+// --- تهيئة Firebase ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getDatabase, ref, set, get, onValue, update, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAW-kOP33xeh0pmSuMdTsii9UWyabsnf1E",
+    authDomain: "jhgjjgg-2952d.firebaseapp.com",
+    databaseURL: "https://jhgjjgg-2952d-default-rtdb.firebaseio.com",
+    projectId: "jhgjjgg-2952d",
+    storageBucket: "jhgjjgg-2952d.firebasestorage.app",
+    messagingSenderId: "322044108118",
+    appId: "1:322044108118:web:d12cbc19d4411ede728af7"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
 // --- تهيئة البيانات ---
-
-// تم تعديل الأسعار لتناسب الدينار العراقي (آلاف الدنانير)
-const products = [
-    { 
-        id: 1, 
-        name: 'دجاجة بياضة', 
-        img: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=300&q=80', 
-        price: 15000, 
-        dailyProfit: 750, 
-        period: 30,
-        description: 'دجاجة بياضة من سلالة ممتازة، تنتج البيض يومياً. استثمار قصير المدى وعائد جيد.'
-    },
-    { 
-        id: 2, 
-        name: 'خروف عراقي', 
-        img: 'https://images.unsplash.com/photo-1484557985045-6f550 ILd687?auto=format&fit=crop&w=300&q=80', 
-        price: 75000, 
-        dailyProfit: 4200, 
-        period: 45,
-        description: 'خروف نعيمي أصيل يعيش في مراعي طبيعية. نمو سريع وطلب عالي في السوق.'
-    },
-    { 
-        id: 3, 
-        name: 'بقرة هولندية', 
-        img: 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?auto=format&fit=crop&w=300&q=80', 
-        price: 225000, 
-        dailyProfit: 14250, 
-        period: 60,
-        description: 'بقرة هولندية حلوب، إنتاجية عالية من الحليب يومياً. تعتبر العمود الفقري للمزرعة.'
-    },
-    { 
-        id: 4, 
-        name: 'حصان عربي', 
-        img: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=300&q=80', 
-        price: 750000, 
-        dailyProfit: 52500, 
-        period: 90,
-        description: 'حصان عربي أصيل للسباقات والإنتاج. أعلى عائد استثماري ومكانة مرموقة.'
-    }
-];
-
-const USER_ID = "8829301";
+let products = [];
+let USER_ID = "";
 let currentSelectedProduct = null;
 let currentQuantity = 1;
 let hasInsurance = false;
-const INSURANCE_PRICE = 3000; // تأمين بالدينار العراقي
+const INSURANCE_PRICE = 3000;
 
-// حفظ جديد ليتعرف على الأرقام الكبيرة
-let userState = JSON.parse(localStorage.getItem('smartFarmUserV2')) || {
-    balance: 150000, // رصيد افتراضي للتجربة بالدينار
-    investments: []
+let userState = {
+    balance: 0,
+    investments: [],
+    name: "",
+    banned: false
 };
 
-// --- دوال مساعدة لترتيب الأرقام (الآلاف والدينار) ---
+// --- دوال مساعدة لترتيب الأرقام ---
 function formatMoney(amount) {
     return Math.floor(amount).toLocaleString('en-US') + ' د.ع';
 }
@@ -62,14 +42,13 @@ function formatNumberOnly(amount) {
 }
 
 // --- العناصر ---
-const compactBalanceEl = document.getElementById('compact-balance'); // الرصيد المصغر
-const balanceEl = document.getElementById('total-balance'); // رصيد المحفظة الكلي
+const compactBalanceEl = document.getElementById('compact-balance');
+const balanceEl = document.getElementById('total-balance');
 const marketListEl = document.getElementById('market-list');
 const investmentsListEl = document.getElementById('investments-list');
 const activeCountEl = document.getElementById('active-count');
 const emptyMsgEl = document.getElementById('empty-msg');
 
-// عناصر المودال
 const modalOverlay = document.getElementById('product-modal');
 const modalImg = document.getElementById('modal-img');
 const modalTitle = document.getElementById('modal-title');
@@ -83,16 +62,84 @@ const qtyDisplay = document.getElementById('qty-display');
 const confirmBuyBtn = document.getElementById('confirm-buy-btn');
 const insuranceToggle = document.getElementById('insurance-toggle');
 
-// --- الوظائف ---
+// --- نظام المصادقة والمزامنة ---
+document.getElementById('google-login-btn').addEventListener('click', () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider).catch(error => alert("خطأ في تسجيل الدخول: " + error.message));
+});
 
-function initApp() {
-    renderMarket();
-    updateDashboard();
-    setInterval(updateLiveProfits, 100);
-    setupWalletButtons();
+window.logout = function() {
+    signOut(auth).then(() => {
+        window.location.reload();
+    });
+};
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        
+        // إنشاء رقم ID عشوائي ومميز من الـ UID لتوافق الشكل القديم
+        USER_ID = parseInt(user.uid.replace(/\D/g, '').substring(0, 7) || Math.floor(Math.random() * 9000000) + 1000000).toString();
+        
+        document.getElementById('user-name-display').textContent = `مرحباً، ${user.displayName.split(' ')[0]}`;
+        document.getElementById('user-avatar').src = user.photoURL;
+        document.getElementById('profile-modal-name').textContent = user.displayName;
+        document.getElementById('profile-modal-img').src = user.photoURL;
+        document.getElementById('user-id-display').textContent = 'ID: ' + USER_ID;
+
+        // جلب بيانات المستخدم أو إنشاء مستخدم جديد
+        const userRef = ref(db, 'users/' + USER_ID);
+        onValue(userRef, (snapshot) => {
+            if (snapshot.exists()) {
+                userState = snapshot.val();
+                if (!userState.investments) userState.investments = [];
+                if (userState.banned) {
+                    alert("عذراً، هذا الحساب محظور من قبل الإدارة.");
+                    signOut(auth);
+                    window.location.reload();
+                }
+            } else {
+                userState = {
+                    name: user.displayName,
+                    balance: 150000, // رصيد افتراضي للتجربة
+                    investments: [],
+                    banned: false,
+                    id: USER_ID
+                };
+                set(userRef, userState);
+            }
+            updateDashboard();
+        });
+
+        // جلب المنتجات من قاعدة البيانات
+        onValue(ref(db, 'products'), (snapshot) => {
+            products = [];
+            if (snapshot.exists()) {
+                snapshot.forEach(child => {
+                    products.push({ id: child.key, ...child.val() });
+                });
+            }
+            renderMarket();
+        });
+
+        setInterval(updateLiveProfits, 100);
+        setupWalletButtons();
+
+    } else {
+        document.getElementById('login-overlay').style.display = 'flex';
+        document.getElementById('main-app').style.display = 'none';
+    }
+});
+
+function saveData() {
+    if (USER_ID) {
+        update(ref(db, 'users/' + USER_ID), userState);
+    }
 }
 
-// 1. رسم السوق (الرئيسية) - تم إزالة الربح المتوقع من هنا
+// --- الوظائف ---
+
 function renderMarket() {
     if(!marketListEl) return;
     marketListEl.innerHTML = '';
@@ -103,15 +150,15 @@ function renderMarket() {
             <img src="${product.img}" class="product-img shadow-3d" alt="${product.name}">
             <h3>${product.name}</h3>
             <span class="price-tag">${formatMoney(product.price)}</span>
-            <button onclick="openProductDetails(${product.id})" class="btn-details shadow-3d">التفاصيل</button>
+            <button onclick="openProductDetails('${product.id}')" class="btn-details shadow-3d">التفاصيل</button>
         `;
         marketListEl.appendChild(card);
     });
 }
 
-// 2. فتح نافذة التفاصيل (الربح يظهر هنا فقط)
 window.openProductDetails = function(id) {
     const product = products.find(p => p.id === id);
+    if (!product) return;
     currentSelectedProduct = product;
     currentQuantity = 1;
     hasInsurance = false;
@@ -134,7 +181,6 @@ window.openProductDetails = function(id) {
     }
 };
 
-// 3. التبديل والتأمين والكمية
 window.updateQuantity = function(change) {
     if (currentQuantity + change >= 1) {
         currentQuantity += change;
@@ -162,7 +208,6 @@ function updateModalCalculations() {
     if(modalDaily) modalDaily.textContent = formatMoney(totalDaily); 
 }
 
-// 4. تنفيذ الشراء
 function executeBuy() {
     if (!currentSelectedProduct) return;
 
@@ -202,13 +247,11 @@ function executeBuy() {
     }
 }
 
-// 5. إغلاق النوافذ
 window.closeModal = function(modalId) {
     const modal = document.getElementById(modalId);
     if(modal) modal.classList.add('hidden');
 };
 
-// 6. تحديث الواجهة (تمت إضافة تنسيق فواصل الآلاف والدينار)
 function updateDashboard() {
     if(compactBalanceEl) compactBalanceEl.textContent = formatNumberOnly(userState.balance);
     if(balanceEl) balanceEl.textContent = formatMoney(userState.balance);
@@ -249,7 +292,7 @@ function updateDashboard() {
     checkWithdrawStatus();
 }
 
-// 7. العداد اللحظي (تم تقليل الكسور لعرض منطقي للدينار العراقي)
+// هذه الدالة تعتمد على وقت الخادم/الوقت المطلق، لذلك إذا خرج المستخدم ورجع سيعمل العداد من حيث يجب
 function updateLiveProfits() {
     userState.investments.forEach(inv => {
         const now = Date.now();
@@ -261,13 +304,11 @@ function updateLiveProfits() {
         
         const profitEl = document.getElementById(`profit-${inv.id}`);
         if (profitEl) {
-            // إضافة كسرين لضمان استمرار حركة العداد مع الدينار
             profitEl.textContent = currentProfit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' د.ع';
         }
     });
 }
 
-// 8. إعدادات الإيداع والسحب
 function setupWalletButtons() {
     const depositBtn = document.querySelector('.deposit'); 
     
@@ -293,9 +334,6 @@ function setupWalletButtons() {
                         window.location.href = `https://t.me/ar_2oa?text=${message}`;
                     }
                 }, 1000);
-            } else {
-                const message = encodeURIComponent(`مرحبا اود الايداع\nالايدي الخاص بي: ${USER_ID}`);
-                window.location.href = `https://t.me/ar_2oa?text=${message}`;
             }
         };
     }
@@ -313,7 +351,15 @@ function checkWithdrawStatus() {
         withdrawBtn.innerHTML = '<i class="fas fa-arrow-down"></i> سحب متاح';
         
         withdrawBtn.onclick = function() {
-            alert('تم تقديم طلب السحب بنجاح. سيتم تحويل الأرباح المتوفرة قريباً.');
+            // إرسال طلب سحب للأدمن
+            const withdrawalRef = push(ref(db, 'withdrawals'));
+            set(withdrawalRef, {
+                userId: USER_ID,
+                name: userState.name,
+                timestamp: Date.now(),
+                status: 'pending'
+            });
+            alert('تم تقديم طلب السحب بنجاح. سيقوم الأدمن بمراجعة الطلب.');
         };
     } else {
         withdrawBtn.style.background = '#ecf0f1';
@@ -321,21 +367,16 @@ function checkWithdrawStatus() {
         withdrawBtn.innerHTML = '<i class="fas fa-lock"></i> سحب مقفل';
         
         withdrawBtn.onclick = function() {
-            alert('بعد انتها دوره الحيوان سوف تسحب ارباحك');
+            alert('بعد انتهاء دورة الحيوان سوف تسحب ارباحك');
         };
     }
 }
 
-// 9. فتح البروفايل
 window.openProfileModal = function() {
-    const userIdDisplay = document.getElementById('user-id-display');
     const profileModal = document.getElementById('profile-modal');
-    
-    if(userIdDisplay) userIdDisplay.textContent = 'ID: ' + USER_ID;
     if(profileModal) profileModal.classList.remove('hidden');
 };
 
-// 10. التنقل بين الأقسام
 window.showSection = function(sectionId, element) {
     const marketSection = document.getElementById('market-section');
     const myFarmSection = document.getElementById('my-farm-section');
@@ -360,10 +401,3 @@ window.showSection = function(sectionId, element) {
         }
     }
 };
-
-function saveData() {
-    localStorage.setItem('smartFarmUserV2', JSON.stringify(userState));
-}
-
-// تشغيل التطبيق
-initApp();
