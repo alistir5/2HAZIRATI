@@ -10,12 +10,22 @@
 </head>
 <body>
 
-    <div class="app-container">
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-box shadow-3d animate__animated animate__fadeInUp">
+            <h2>مرحباً بك في المزرعة الذكية</h2>
+            <p>يرجى تسجيل الدخول للبدء بالاستثمار</p>
+            <button id="google-login-btn" class="btn-google">
+                <i class="fab fa-google"></i> تسجيل الدخول بواسطة Google
+            </button>
+        </div>
+    </div>
+
+    <div class="app-container" id="main-app" style="display: none;">
         <header class="app-header animate__animated animate__fadeInDown">
             <div class="profile-info" onclick="openProfileModal()">
-                <img src="https://ui-avatars.com/api/?name=Abu+Amir&background=random" alt="User" class="avatar shadow-3d">
+                <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=random" alt="User" class="avatar shadow-3d">
                 <div>
-                    <h3>مرحباً، أبو أمير</h3>
+                    <h3 id="user-name-display">مرحباً، المستخدم</h3>
                     <span class="badge">انقر لعرض البروفايل</span>
                 </div>
             </div>
@@ -155,18 +165,18 @@
     <div id="profile-modal" class="modal-overlay hidden">
         <div class="modal-content profile-modal-content shadow-3d">
             <span class="close-btn" onclick="closeModal('profile-modal')">&times;</span>
-            <img src="https://ui-avatars.com/api/?name=Abu+Amir&background=random&size=128" class="profile-big-img shadow-3d">
-            <h2>أبو أمير</h2>
-            <p id="user-id-display">ID: 8829301</p>
+            <img id="profile-modal-img" src="https://ui-avatars.com/api/?name=User&background=random&size=128" class="profile-big-img shadow-3d">
+            <h2 id="profile-modal-name">المستخدم</h2>
+            <p id="user-id-display">ID: 000000</p>
             <hr>
             <div class="profile-details">
-                <p><strong>نوع الحساب:</strong> مستثمر ذهبي</p>
-                <p><strong>تاريخ الانضمام:</strong> 2024/02/01</p>
+                <p><strong>نوع الحساب:</strong> مستثمر</p>
                 <p><strong>الحالة:</strong> موثق ✅</p>
+                <button onclick="logout()" style="width:100%; padding:10px; background:var(--danger); color:white; border:none; border-radius:10px; margin-top:15px; cursor:pointer;">تسجيل الخروج</button>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
