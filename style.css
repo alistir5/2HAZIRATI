@@ -1,0 +1,610 @@
+:root {
+    --primary-color: #2ecc71;
+    --dark-green: #27ae60;
+    --bg-color: #f4f6f8;
+    --text-color: #2c3e50;
+    --card-bg: #ffffff;
+    --danger: #e74c3c;
+    --shadow-light: 0 8px 20px rgba(0,0,0,0.08);
+    --shadow-heavy: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* تاثيرات 3D عصرية */
+.shadow-3d {
+    box-shadow: var(--shadow-light);
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+/* حاوية التطبيق */
+.app-container {
+    background-color: var(--bg-color);
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 90px;
+    box-shadow: var(--shadow-heavy);
+    overflow-x: hidden;
+}
+
+/* الرأس */
+.app-header {
+    background: linear-gradient(135deg, var(--dark-green), var(--primary-color));
+    color: white;
+    padding: 20px 20px 30px 20px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.badge {
+    background: rgba(255,255,255,0.25);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    backdrop-filter: blur(5px);
+}
+
+/* كبسولة الرصيد في الرئيسية (تصميم مطابق للصورة) */
+.header-balance-pill {
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 5px 5px 15px;
+    width: max-content;
+    min-width: 180px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    margin: 0 auto;
+}
+
+.header-balance-pill .coin-icon {
+    background-image: radial-gradient(circle, #fceabb, #f8b500);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.4);
+}
+
+.header-balance-pill .balance-amount {
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: #e0aa3e;
+    margin: 0 15px;
+    letter-spacing: 0.5px;
+}
+
+.header-balance-pill .add-btn {
+    background: linear-gradient(135deg, #444, #222);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), 0 2px 5px rgba(0,0,0,0.5);
+    font-size: 1.1rem;
+}
+
+.header-balance-pill .add-btn:active {
+    transform: scale(0.9);
+}
+
+/* بطاقة المحفظة (نُقلت إلى الداخل) */
+.wallet-card {
+    background: linear-gradient(135deg, var(--dark-green), var(--primary-color));
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+    color: white;
+}
+
+.wallet-card p {
+    color: rgba(255,255,255,0.9);
+}
+
+.wallet-card h1 {
+    font-size: 2.8rem;
+    margin: 10px 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    color: white;
+}
+
+.wallet-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.btn-action {
+    background: white;
+    color: var(--dark-green);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn-action:active {
+    transform: translateY(2px);
+}
+
+.btn-action.withdraw {
+    background: #ecf0f1;
+    color: #7f8c8d;
+}
+
+/* المحتوى */
+.content {
+    padding: 20px;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.section-title h2 {
+    font-size: 1.3rem;
+    color: var(--text-color);
+}
+
+/* بطاقات السوق 3D */
+.market-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.product-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: var(--shadow-light);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-bottom: 4px solid var(--primary-color);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.price-tag {
+    color: var(--dark-green);
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: block;
+    margin: 5px 0;
+}
+
+.btn-details {
+    background: linear-gradient(135deg, #34495e, #2c3e50);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 12px;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* بطاقات المحفظة الاستثمارية */
+.investment-card {
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-light);
+    border-right: 5px solid var(--primary-color);
+    transition: transform 0.2s;
+}
+
+.investment-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.inv-info h4 {
+    margin-bottom: 5px;
+    font-size: 1.05rem;
+}
+
+.inv-info small {
+    color: #7f8c8d;
+    display: block;
+}
+
+.live-profit {
+    color: var(--dark-green);
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 1.1rem;
+    background: #e8f8f5;
+    padding: 5px 10px;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.locked-profit-msg {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+    font-size: 0.85rem;
+    color: var(--dark-green);
+    font-weight: bold;
+    text-align: center;
+    background: rgba(46, 204, 113, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+/* القائمة السفلية */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+    z-index: 100;
+}
+
+.nav-item {
+    text-decoration: none;
+    color: #95a5a6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    width: 33%;
+    transition: color 0.3s;
+}
+
+.nav-item.active {
+    color: var(--primary-color);
+}
+
+.nav-item i {
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+}
+
+.center-nav {
+    position: relative;
+    top: -20px;
+}
+
+.nav-center-circle {
+    background: linear-gradient(135deg, var(--primary-color), var(--dark-green));
+    color: white;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+    border: 5px solid var(--bg-color);
+    margin-bottom: 5px;
+}
+
+.nav-center-circle i {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+/* --- النوافذ المنبثقة --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 480px;
+    padding: 25px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-height: 92vh;
+    overflow-y: auto;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.text-center { text-align: center; }
+.text-primary { color: var(--primary-color); }
+
+.close-btn {
+    float: left;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.2s;
+}
+.close-btn:hover { color: var(--danger); }
+
+.modal-hero-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin-bottom: 15px;
+}
+
+.modal-description {
+    color: #555;
+    margin: 10px 0 20px 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.95rem;
+}
+
+.stat-row.highlight {
+    background: linear-gradient(to right, #e8f8f5, #ffffff);
+    padding: 12px;
+    border-radius: 12px;
+    color: var(--dark-green);
+    font-weight: bold;
+    border: none;
+    margin-top: 15px;
+}
+
+/* التحكم بالكمية */
+.quantity-control {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.quantity-control label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.qty-inputs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.qty-inputs button {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.qty-inputs span {
+    font-size: 1.8rem;
+    font-weight: bold;
+    width: 40px;
+    text-align: center;
+}
+
+/* التأمين */
+.insurance-container {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 15px;
+    margin: 20px 0;
+    border: 1px solid #e0e0e0;
+}
+
+.insurance-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.insurance-desc {
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* الفوتر */
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.final-price {
+    display: flex;
+    flex-direction: column;
+}
+
+.final-price span {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--dark-green);
+}
+
+.btn-confirm-buy {
+    background: linear-gradient(135deg, var(--primary-color), var(--dark-green));
+    color: white;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* البروفايل */
+.profile-modal-content {
+    text-align: center;
+}
+
+.profile-big-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 4px solid var(--primary-color);
+}
+
+.profile-details {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.profile-details p {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 1.05rem;
+}
