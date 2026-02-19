@@ -23,7 +23,6 @@ let USER_ID = "";
 let currentSelectedProduct = null;
 let currentQuantity = 1;
 let hasInsurance = false;
-const INSURANCE_PRICE = 3000;
 
 let userState = {
     balance: 0,
@@ -61,6 +60,13 @@ const modalFinalPrice = document.getElementById('modal-final-price');
 const qtyDisplay = document.getElementById('qty-display');
 const confirmBuyBtn = document.getElementById('confirm-buy-btn');
 const insuranceToggle = document.getElementById('insurance-toggle');
+
+// دالة التنبيه المخصصة المتحركة
+window.showCustomAlert = function(title, msg) {
+    document.getElementById('alert-title').textContent = title;
+    document.getElementById('alert-msg').textContent = msg;
+    document.getElementById('alert-modal').classList.remove('hidden');
+};
 
 // --- نظام المصادقة والمزامنة ---
 document.getElementById('google-login-btn').addEventListener('click', () => {
@@ -170,6 +176,11 @@ window.openProductDetails = function(id) {
     if(modalPrice) modalPrice.textContent = formatMoney(product.price);
     if(modalPeriod) modalPeriod.textContent = product.period + ' يوم';
 
+    // تحديث سعر التأمين ديناميكياً
+    const insPrice = currentSelectedProduct.insurancePrice || 0;
+    const insDisplay = document.getElementById('insurance-cost-display');
+    if(insDisplay) insDisplay.textContent = formatNumberOnly(insPrice);
+
     updateModalCalculations();
     
     if(modalOverlay) modalOverlay.classList.remove('hidden');
@@ -196,8 +207,9 @@ window.toggleInsurance = function() {
 function updateModalCalculations() {
     if(qtyDisplay) qtyDisplay.textContent = currentQuantity;
     
+    const dynamicInsurancePrice = currentSelectedProduct.insurancePrice || 0;
     const basePrice = currentSelectedProduct.price * currentQuantity;
-    const insuranceCost = hasInsurance ? (INSURANCE_PRICE * currentQuantity) : 0;
+    const insuranceCost = hasInsurance ? (dynamicInsurancePrice * currentQuantity) : 0;
     const totalPrice = basePrice + insuranceCost;
     
     const totalDaily = currentSelectedProduct.dailyProfit * currentQuantity;
@@ -211,8 +223,9 @@ function updateModalCalculations() {
 function executeBuy() {
     if (!currentSelectedProduct) return;
 
+    const dynamicInsurancePrice = currentSelectedProduct.insurancePrice || 0;
     const basePrice = currentSelectedProduct.price * currentQuantity;
-    const insuranceCost = hasInsurance ? (INSURANCE_PRICE * currentQuantity) : 0;
+    const insuranceCost = hasInsurance ? (dynamicInsurancePrice * currentQuantity) : 0;
     const totalPrice = basePrice + insuranceCost;
 
     if (userState.balance >= totalPrice) {
@@ -241,9 +254,9 @@ function executeBuy() {
         saveData();
         updateDashboard();
         closeModal('product-modal');
-        alert('تم الشراء بنجاح! تم إضافة الحيوان إلى محفظتك.');
+        showCustomAlert('تم بنجاح', 'تم الشراء بنجاح! تم إضافة الحيوان إلى محفظتك.');
     } else {
-        alert('عذراً، رصيدك غير كافي!');
+        showCustomAlert('عذراً', 'رصيدك غير كافي لإتمام هذه العملية!');
     }
 }
 
@@ -292,7 +305,6 @@ function updateDashboard() {
     checkWithdrawStatus();
 }
 
-// هذه الدالة تعتمد على وقت الخادم/الوقت المطلق، لذلك إذا خرج المستخدم ورجع سيعمل العداد من حيث يجب
 function updateLiveProfits() {
     userState.investments.forEach(inv => {
         const now = Date.now();
@@ -351,15 +363,8 @@ function checkWithdrawStatus() {
         withdrawBtn.innerHTML = '<i class="fas fa-arrow-down"></i> سحب متاح';
         
         withdrawBtn.onclick = function() {
-            // إرسال طلب سحب للأدمن
-            const withdrawalRef = push(ref(db, 'withdrawals'));
-            set(withdrawalRef, {
-                userId: USER_ID,
-                name: userState.name,
-                timestamp: Date.now(),
-                status: 'pending'
-            });
-            alert('تم تقديم طلب السحب بنجاح. سيقوم الأدمن بمراجعة الطلب.');
+            document.getElementById('withdraw-name').value = userState.name;
+            document.getElementById('withdraw-modal').classList.remove('hidden');
         };
     } else {
         withdrawBtn.style.background = '#ecf0f1';
@@ -367,10 +372,58 @@ function checkWithdrawStatus() {
         withdrawBtn.innerHTML = '<i class="fas fa-lock"></i> سحب مقفل';
         
         withdrawBtn.onclick = function() {
-            alert('بعد انتهاء دورة الحيوان سوف تسحب ارباحك');
+            showCustomAlert('سحب مقفل', 'بعد انتهاء دورة الحيوان سوف تتمكن من سحب أرباحك.');
         };
     }
 }
+
+// دالة تنفيذ السحب (الجديدة)
+window.submitWithdrawal = function() {
+    const name = document.getElementById('withdraw-name').value;
+    const amount = parseFloat(document.getElementById('withdraw-amount').value);
+    const method = document.getElementById('withdraw-method').value;
+    const notes = document.getElementById('withdraw-notes').value;
+
+    if(!name || !amount || !method) {
+        showCustomAlert('بيانات ناقصة', 'يرجى تعبئة الحقول الأساسية (الاسم، المبلغ، رقم الحساب).');
+        return;
+    }
+
+    if(amount > userState.balance) {
+        showCustomAlert('رصيد غير كافٍ', 'عذراً، المبلغ المطلوب سحبه أكبر من رصيدك المتاح في المحفظة.');
+        return;
+    }
+
+    if(amount <= 0) {
+        showCustomAlert('خطأ', 'يرجى إدخال مبلغ سحب صحيح.');
+        return;
+    }
+
+    // خصم الرصيد من المحفظة
+    userState.balance -= amount;
+    saveData();
+    updateDashboard();
+
+    // إرسال طلب السحب للإدارة
+    const withdrawalRef = push(ref(db, 'withdrawals'));
+    set(withdrawalRef, {
+        userId: USER_ID,
+        name: name,
+        amount: amount,
+        method: method,
+        notes: notes,
+        timestamp: Date.now(),
+        status: 'pending'
+    });
+
+    closeModal('withdraw-modal');
+    // تنظيف الحقول
+    document.getElementById('withdraw-amount').value = '';
+    document.getElementById('withdraw-method').value = '';
+    document.getElementById('withdraw-notes').value = '';
+    
+    showCustomAlert('تم بنجاح', 'تم تقديم طلب السحب بنجاح وتم خصم الرصيد من محفظتك. يرجى انتظار التحويل من الإدارة المالية.');
+};
 
 window.openProfileModal = function() {
     const profileModal = document.getElementById('profile-modal');
