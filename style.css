@@ -665,3 +665,30 @@ input:checked + .slider:before {
     color: #DB4437;
     font-size: 1.3rem;
 }
+
+/* ستايل حقول السحب الجديدة */
+.form-group-user {
+    margin-bottom: 15px;
+    text-align: right;
+}
+.form-group-user label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+.form-group-user input, .form-group-user textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+    background: #f8f9fa;
+}
+.form-group-user input:focus, .form-group-user textarea:focus {
+    border-color: var(--primary-color);
+    background: white;
+}
