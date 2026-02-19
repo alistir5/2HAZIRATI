@@ -138,7 +138,7 @@
                         <span class="slider round"></span>
                     </label>
                 </div>
-                <p class="insurance-desc">يضمن لك استرجاع رأس المال في حال حدوث أي طارئ. التكلفة: +3,000 د.ع للحيوان الواحد.</p>
+                <p class="insurance-desc">يضمن لك استرجاع رأس المال في حال حدوث أي طارئ. التكلفة: +<span id="insurance-cost-display">0</span> د.ع للحيوان الواحد.</p>
             </div>
 
             <div class="modal-footer">
@@ -174,6 +174,43 @@
                 <p><strong>الحالة:</strong> موثق ✅</p>
                 <button onclick="logout()" style="width:100%; padding:10px; background:var(--danger); color:white; border:none; border-radius:10px; margin-top:15px; cursor:pointer;">تسجيل الخروج</button>
             </div>
+        </div>
+    </div>
+
+    <div id="alert-modal" class="modal-overlay hidden">
+        <div class="modal-content text-center animate__animated animate__shakeX">
+            <div style="color: var(--danger); font-size: 4rem; margin-bottom: 15px;">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h2 id="alert-title">تنبيه</h2>
+            <p id="alert-msg" style="margin: 15px 0; font-size: 1.1rem; color: #555;">...</p>
+            <button onclick="closeModal('alert-modal')" class="btn-confirm-buy shadow-3d" style="background: var(--danger); width: 100%;">حسناً</button>
+        </div>
+    </div>
+
+    <div id="withdraw-modal" class="modal-overlay hidden">
+        <div class="modal-content shadow-3d animate__animated animate__fadeInUp">
+            <span class="close-btn" onclick="closeModal('withdraw-modal')">&times;</span>
+            <h2 style="margin-bottom: 20px; color: var(--dark-green); text-align: center;"><i class="fas fa-money-bill-wave"></i> طلب سحب رصيد</h2>
+            
+            <div class="form-group-user">
+                <label>الاسم الكامل</label>
+                <input type="text" id="withdraw-name" placeholder="أدخل اسمك الكامل">
+            </div>
+            <div class="form-group-user">
+                <label>المبلغ المراد سحبه (د.ع)</label>
+                <input type="number" id="withdraw-amount" placeholder="مثال: 50000">
+            </div>
+            <div class="form-group-user">
+                <label>رقم الحساب / العملية</label>
+                <input type="text" id="withdraw-method" placeholder="رقم المحفظة أو الزين كاش">
+            </div>
+            <div class="form-group-user">
+                <label>ملاحظات أو نوع السحب</label>
+                <textarea id="withdraw-notes" rows="2" placeholder="اكتب ملاحظات للإدارة (اختياري)"></textarea>
+            </div>
+            
+            <button onclick="submitWithdrawal()" class="btn-confirm-buy shadow-3d" style="width: 100%; margin-top: 15px;">تأكيد السحب</button>
         </div>
     </div>
 
