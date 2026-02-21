@@ -266,6 +266,24 @@ window.closeModal = function(modalId) {
 };
 
 function updateDashboard() {
+    // --- التعديل لإضافة الأرباح إلى الرصيد عند انتهاء الدورة ---
+    let needsSave = false;
+    if (userState.investments && userState.investments.length > 0) {
+        userState.investments.forEach(inv => {
+            // التحقق من انتهاء الدورة وعدم استلام الأرباح سابقاً
+            if (Date.now() >= inv.expiryDate && !inv.profitClaimed) {
+                userState.balance += inv.totalExpectedProfit; // إضافة الربح للرصيد
+                inv.profitClaimed = true; // تعيين علامة لتجنب تكرار الإضافة
+                needsSave = true;
+            }
+        });
+    }
+
+    if (needsSave) {
+        saveData(); // حفظ البيانات الجديدة في قاعدة البيانات
+    }
+    // --- نهاية التعديل ---
+
     if(compactBalanceEl) compactBalanceEl.textContent = formatNumberOnly(userState.balance);
     if(balanceEl) balanceEl.textContent = formatMoney(userState.balance);
     if(activeCountEl) activeCountEl.textContent = userState.investments.length + ' حيوان';
