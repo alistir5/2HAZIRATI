@@ -108,7 +108,7 @@ onAuthStateChanged(auth, (user) => {
             } else {
                 userState = {
                     name: user.displayName,
-                    balance: 150000, // رصيد افتراضي للتجربة
+                    balance: 0, // تم التعديل إلى 0 للمستخدمين الجدد
                     investments: [],
                     banned: false,
                     id: USER_ID
@@ -395,7 +395,6 @@ function checkWithdrawStatus() {
     }
 }
 
-// دالة تنفيذ السحب (الجديدة)
 window.submitWithdrawal = function() {
     const name = document.getElementById('withdraw-name').value;
     const amount = parseFloat(document.getElementById('withdraw-amount').value);
@@ -472,3 +471,27 @@ window.showSection = function(sectionId, element) {
         }
     }
 };
+
+// --- نظام تثبيت التطبيق PWA ---
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    // منع ظهور شريط التثبيت الافتراضي الصغير في الأسفل
+    e.preventDefault();
+    // حفظ الحدث لاستخدامه لاحقاً
+    deferredPrompt = e;
+    // إظهار نافذة التثبيت المخصصة
+    document.getElementById('install-modal').classList.remove('hidden');
+});
+
+document.getElementById('install-btn').addEventListener('click', async () => {
+    // إخفاء نافذة التثبيت
+    document.getElementById('install-modal').classList.add('hidden');
+    // إظهار شاشة التثبيت الخاصة بالنظام
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        // انتظار اختيار المستخدم
+        const { outcome } = await deferredPrompt.userChoice;
+        // تفريغ المتغير بعد الاستخدام
+        deferredPrompt = null;
+    }
+});
