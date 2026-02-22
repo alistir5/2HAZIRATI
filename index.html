@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مشروع المزرعة الذكية</title>
+    <title>حظيرتي-HAZIRATI</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="style.css">
@@ -12,7 +13,7 @@
 
     <div id="login-overlay" class="login-overlay">
         <div class="login-box shadow-3d animate__animated animate__fadeInUp">
-            <h2>مرحباً بك في المزرعة الذكية</h2>
+            <h2>مرحباً بك في حظيرتي-HAZIRATI</h2>
             <p>يرجى تسجيل الدخول للبدء بالاستثمار</p>
             <button id="google-login-btn" class="btn-google">
                 <i class="fab fa-google"></i> تسجيل الدخول بواسطة Google
@@ -211,6 +212,20 @@
             </div>
             
             <button onclick="submitWithdrawal()" class="btn-confirm-buy shadow-3d" style="width: 100%; margin-top: 15px;">تأكيد السحب</button>
+        </div>
+    </div>
+
+    <div id="install-modal" class="modal-overlay hidden">
+        <div class="modal-content text-center animate__animated animate__fadeInUp">
+            <div style="color: var(--primary-color); font-size: 4rem; margin-bottom: 15px;">
+                <i class="fas fa-download"></i>
+            </div>
+            <h2>تثبيت التطبيق</h2>
+            <p style="margin: 15px 0; font-size: 1.1rem; color: #555;">قم بتثبيت تطبيق حظيرتي-HAZIRATI على جهازك للوصول السريع والسهل.</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="install-btn" class="btn-confirm-buy shadow-3d" style="flex: 1;">تثبيت</button>
+                <button onclick="closeModal('install-modal')" class="btn-confirm-buy shadow-3d" style="flex: 1; background: #95a5a6;">تخطي</button>
+            </div>
         </div>
     </div>
 
