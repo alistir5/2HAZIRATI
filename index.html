@@ -2,233 +2,52 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>حظيرتي-HAZIRATI</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الصيانة الدورية</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .maintenance-box {
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+        .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+        h1 {
+            color: #e74c3c;
+            margin: 0 0 15px 0;
+            font-size: 28px;
+        }
+        p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
 
-    <div id="login-overlay" class="login-overlay">
-        <div class="login-box shadow-3d animate__animated animate__fadeInUp">
-            <h2>مرحباً بك في حظيرتي-HAZIRATI</h2>
-            <p>يرجى تسجيل الدخول للبدء بالاستثمار</p>
-            <button id="google-login-btn" class="btn-google">
-                <i class="fab fa-google"></i> تسجيل الدخول بواسطة Google
-            </button>
-        </div>
+    <div class="maintenance-box">
+        <div class="icon">⚙️</div>
+        <h1>التطبيق في فترة الصيانة</h1>
+        <p>نحن نقوم بإجراء بعض التحديثات الهامة لتحسين تجربتكم. سنعود للعمل في أقرب وقت ممكن، شكراً لتفهمكم!</p>
     </div>
 
-    <div class="app-container" id="main-app" style="display: none;">
-        <header class="app-header animate__animated animate__fadeInDown">
-            <div class="profile-info" onclick="openProfileModal()">
-                <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=random" alt="User" class="avatar shadow-3d">
-                <div>
-                    <h3 id="user-name-display">مرحباً، المستخدم</h3>
-                    <span class="badge">انقر لعرض البروفايل</span>
-                </div>
-            </div>
-            
-            <div class="header-balance-pill shadow-3d">
-                <div class="coin-icon">
-                    <i class="fas fa-coins" style="color: #785a16; font-size: 1.1rem;"></i>
-                </div>
-                <span id="compact-balance" class="balance-amount">0</span>
-                <button class="add-btn" onclick="showSection('my-farm-section', document.getElementById('nav-wallet'))">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-        </header>
-
-        <main class="content">
-            
-            <section id="my-farm-section" style="display: none;">
-                
-                <div class="wallet-card shadow-3d">
-                    <p>إجمالي الرصيد القابل للسحب</p>
-                    <h1 id="total-balance">0 د.ع</h1>
-                    <div class="wallet-actions">
-                        <button class="btn-action deposit" id="deposit-btn"><i class="fas fa-plus"></i> إيداع</button>
-                        <button class="btn-action withdraw" id="withdraw-btn"><i class="fas fa-lock"></i> سحب</button>
-                    </div>
-                </div>
-
-                <div class="section-title animate__animated animate__fadeIn">
-                    <h2><i class="fas fa-wallet"></i> المحفظة (استثماراتي)</h2>
-                    <span id="active-count">0 حيوان</span>
-                </div>
-                <div id="investments-list" class="investments-container">
-                    <div class="empty-state" id="empty-msg">
-                        <i class="fas fa-leaf"></i>
-                        <p>لا توجد استثمارات نشطة حالياً</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="market-section" class="animate__animated animate__zoomIn">
-                <div class="section-title">
-                    <h2><i class="fas fa-store"></i> سوق المواشي</h2>
-                </div>
-                <div id="market-list" class="market-grid">
-                    </div>
-            </section>
-
-        </main>
-
-        <nav class="bottom-nav">
-            <a href="#" class="nav-item" id="nav-wallet" onclick="showSection('my-farm-section', this)">
-                <i class="fas fa-wallet"></i>
-                <span>المحفظة</span>
-            </a>
-            <a href="#" class="nav-item active center-nav animate__animated animate__pulse animate__infinite" onclick="showSection('market-section', this)">
-                <div class="nav-center-circle">
-                    <i class="fas fa-home"></i>
-                </div>
-                <span>الرئيسية</span>
-            </a>
-            <a href="#" class="nav-item" onclick="openProfileModal()">
-                <i class="fas fa-cog"></i>
-                <span>الإعدادات</span>
-            </a>
-        </nav>
-    </div>
-
-    <div id="product-modal" class="modal-overlay hidden">
-        <div class="modal-content shadow-3d">
-            <span class="close-btn" onclick="closeModal('product-modal')">&times;</span>
-            <img id="modal-img" src="" class="modal-hero-img shadow-3d">
-            <h2 id="modal-title">اسم الحيوان</h2>
-            <p id="modal-desc" class="modal-description">وصف الحيوان يظهر هنا...</p>
-            
-            <div class="modal-stats">
-                <div class="stat-row">
-                    <span>السعر الأساسي:</span>
-                    <span id="modal-price" class="value">0 د.ع</span>
-                </div>
-                <div class="stat-row">
-                    <span>الربح المتوقع:</span>
-                    <span id="modal-daily" class="value">0 د.ع</span>
-                </div>
-                <div class="stat-row">
-                    <span>مدة العقد:</span>
-                    <span id="modal-period" class="value">0 يوم</span>
-                </div>
-                <div class="stat-row highlight shadow-3d">
-                    <span>إجمالي الربح المتوقع:</span>
-                    <span id="modal-total-profit" class="value">0 د.ع</span>
-                </div>
-            </div>
-
-            <div class="quantity-control">
-                <label>عدد الحيوانات (لمضاعفة الربح):</label>
-                <div class="qty-inputs">
-                    <button class="shadow-3d" onclick="updateQuantity(-1)">-</button>
-                    <span id="qty-display">1</span>
-                    <button class="shadow-3d" onclick="updateQuantity(1)">+</button>
-                </div>
-            </div>
-
-            <div class="insurance-container shadow-3d">
-                <div class="insurance-header">
-                    <i class="fas fa-shield-alt text-primary"></i>
-                    <strong>تأمين الحيوان الاستثماري</strong>
-                    <label class="switch">
-                        <input type="checkbox" id="insurance-toggle" onchange="toggleInsurance()">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <p class="insurance-desc">يضمن لك استرجاع رأس المال في حال حدوث أي طارئ. التكلفة: +<span id="insurance-cost-display">0</span> د.ع للحيوان الواحد.</p>
-            </div>
-
-            <div class="modal-footer">
-                <div class="final-price">
-                    <small>الإجمالي للدفع:</small>
-                    <span id="modal-final-price">0 د.ع</span>
-                </div>
-                <button id="confirm-buy-btn" class="btn-confirm-buy shadow-3d">تأكيد الشراء</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="deposit-modal" class="modal-overlay hidden">
-        <div class="modal-content text-center animate__animated animate__bounceIn">
-            <div class="deposit-icon">
-                <i class="fab fa-telegram-plane fa-4x" style="color: #0088cc;"></i>
-            </div>
-            <h2 style="margin: 15px 0;">قسم المالية</h2>
-            <p style="color: #666; font-size: 1.1rem;">سوف يتم نقلك إلى قسم المالية عبر التلغرام لإتمام عملية الإيداع...</p>
-            <h1 id="countdown-timer" style="font-size: 4rem; color: var(--primary-color); margin: 20px 0;">3</h1>
-        </div>
-    </div>
-
-    <div id="profile-modal" class="modal-overlay hidden">
-        <div class="modal-content profile-modal-content shadow-3d">
-            <span class="close-btn" onclick="closeModal('profile-modal')">&times;</span>
-            <img id="profile-modal-img" src="https://ui-avatars.com/api/?name=User&background=random&size=128" class="profile-big-img shadow-3d">
-            <h2 id="profile-modal-name">المستخدم</h2>
-            <p id="user-id-display">ID: 000000</p>
-            <hr>
-            <div class="profile-details">
-                <p><strong>نوع الحساب:</strong> مستثمر</p>
-                <p><strong>الحالة:</strong> موثق ✅</p>
-                <button onclick="logout()" style="width:100%; padding:10px; background:var(--danger); color:white; border:none; border-radius:10px; margin-top:15px; cursor:pointer;">تسجيل الخروج</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="alert-modal" class="modal-overlay hidden">
-        <div class="modal-content text-center animate__animated animate__shakeX">
-            <div style="color: var(--danger); font-size: 4rem; margin-bottom: 15px;">
-                <i class="fas fa-exclamation-circle"></i>
-            </div>
-            <h2 id="alert-title">تنبيه</h2>
-            <p id="alert-msg" style="margin: 15px 0; font-size: 1.1rem; color: #555;">...</p>
-            <button onclick="closeModal('alert-modal')" class="btn-confirm-buy shadow-3d" style="background: var(--danger); width: 100%;">حسناً</button>
-        </div>
-    </div>
-
-    <div id="withdraw-modal" class="modal-overlay hidden">
-        <div class="modal-content shadow-3d animate__animated animate__fadeInUp">
-            <span class="close-btn" onclick="closeModal('withdraw-modal')">&times;</span>
-            <h2 style="margin-bottom: 20px; color: var(--dark-green); text-align: center;"><i class="fas fa-money-bill-wave"></i> طلب سحب رصيد</h2>
-            
-            <div class="form-group-user">
-                <label>الاسم الكامل</label>
-                <input type="text" id="withdraw-name" placeholder="أدخل اسمك الكامل">
-            </div>
-            <div class="form-group-user">
-                <label>المبلغ المراد سحبه (د.ع)</label>
-                <input type="number" id="withdraw-amount" placeholder="مثال: 50000">
-            </div>
-            <div class="form-group-user">
-                <label>رقم الحساب / العملية</label>
-                <input type="text" id="withdraw-method" placeholder="رقم المحفظة أو الزين كاش">
-            </div>
-            <div class="form-group-user">
-                <label>ملاحظات أو نوع السحب</label>
-                <textarea id="withdraw-notes" rows="2" placeholder="اكتب ملاحظات للإدارة (اختياري)"></textarea>
-            </div>
-            
-            <button onclick="submitWithdrawal()" class="btn-confirm-buy shadow-3d" style="width: 100%; margin-top: 15px;">تأكيد السحب</button>
-        </div>
-    </div>
-
-    <div id="install-modal" class="modal-overlay hidden">
-        <div class="modal-content text-center animate__animated animate__fadeInUp">
-            <div style="color: var(--primary-color); font-size: 4rem; margin-bottom: 15px;">
-                <i class="fas fa-download"></i>
-            </div>
-            <h2>تثبيت التطبيق</h2>
-            <p style="margin: 15px 0; font-size: 1.1rem; color: #555;">قم بتثبيت تطبيق حظيرتي-HAZIRATI على جهازك للوصول السريع والسهل.</p>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button id="install-btn" class="btn-confirm-buy shadow-3d" style="flex: 1;">تثبيت</button>
-                <button onclick="closeModal('install-modal')" class="btn-confirm-buy shadow-3d" style="flex: 1; background: #95a5a6;">تخطي</button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module" src="script.js"></script>
 </body>
 </html>
